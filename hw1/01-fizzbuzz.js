@@ -27,18 +27,20 @@ Output: ["1","2","Fizz","4","Buzz","Fizz","7","8","Fizz","Buzz","11","Fizz","13"
 
 **/
 
-function fizzBuzz(n) {
+const fb = function fizzBuzz(n) {
   const results = [];
   for (let i = 1; i <= n; i += 1) {
     if (i % 3 === 0 && i % 5 === 0) {
-      results.push("FizzBuzz");
+      results.push('FizzBuzz');
     } else if (i % 3 === 0) {
-      results.push("Fizz");
+      results.push('Fizz');
     } else if (i % 5 === 0) {
-      results.push("Buzz");
+      results.push('Buzz');
     } else {
       results.push(i.toString());
     }
   }
   return results;
-}
+};
+
+console.log(fb(15));
