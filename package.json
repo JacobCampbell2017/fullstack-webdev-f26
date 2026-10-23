@@ -10,5 +10,8 @@
     "lint": "eslint hw1 hw2",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "express": "^5.3.0"
   }
 }
