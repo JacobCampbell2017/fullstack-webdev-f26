@@ -22,3 +22,19 @@ Input: nums = [3,3], target = 6
 Output: [0,1]
 
 **/
+
+function twoSum(nums, target) {
+  const results = new Map();
+
+  for (let i = 0; i < nums.length; i += 1) {
+    const complement = target - nums[i];
+
+    if (results.has(complement)) {
+      return [results.get(complement), i];
+    }
+
+    results.set(nums[i], i);
+  }
+
+  return [];
+}
