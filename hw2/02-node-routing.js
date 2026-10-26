@@ -1,4 +1,5 @@
 const http = require('http');
+
 const port = process.env.PORT || 5001;
 
 // http://localhost:5001/welcome should return a status code 200 with a welcome message of your choice in html format
@@ -12,18 +13,28 @@ const port = process.env.PORT || 5001;
 // For other routes, such as http://localhost:5001/other, this exercise should return a status code 404 with '404 - page not found' in html format
 
 const server = http.createServer((req, res) => {
-  const routes = [
-    'welcome',
-    'redirect',
-    'redirected',
-    'cache',
-    'cookie',
-    'other',
-  ];
+  //const routes = ['welcome', 'redirect', 'redirected', 'cache', 'cookie', 'other'];
 
-  res.writeHead(200, { 'Content-Type': 'text/html' });
-  res.write('Node Routing Exercise');
-  res.end();
+  // request urls
+  if (req.url === '/welcome') {
+    res.writeHead(200, { 'content-type': 'text/html' });
+    res.end('<p>Welcome to my node welcome page!</p>');
+  } else if (req.url === '/redirect') {
+    res.writeHead(302, { location: '/redirected' });
+    res.end();
+  } else if (req.url === '/redirected') {
+    res.writeHead(200, { 'content-type': 'text/html' });
+    res.end('<p>Welcome to the redirected page nerd</p>');
+  } else if (req.url === '/cache') {
+    res.writeHead(200, { 'content-type': 'text/html', 'cache-control': 'max-age=86400' });
+    res.end('<p>this resource was cached</p>');
+  } else if (req.url === '/cookie') {
+    res.writeHead(200, { 'content-type': 'text/plain', 'set-cookie': 'hello=world' });
+    res.end('cookies... yummm');
+  } else {
+    res.writeHead(404, { 'content-type': 'text/html' });
+    res.end('<p>404 - page not found</p>');
+  }
 });
 
 server.listen(port, () => {
