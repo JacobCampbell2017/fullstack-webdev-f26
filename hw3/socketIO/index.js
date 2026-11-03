@@ -1,15 +1,14 @@
-const express = require('express');
+import express from 'express';
+import http from 'node:http';
+import { fileURLToPath } from 'node:url';
+import { Server } from 'socket.io';
 
 const app = express();
-const http = require('http');
-
 const server = http.createServer(app);
-const { Server } = require('socket.io');
-
 const io = new Server(server);
 
 app.get('/', (req, res) => {
-  res.sendFile(`${__dirname}/index.html`);
+  res.sendFile(fileURLToPath(new URL('./index.html', import.meta.url)));
 });
 
 io.on('connection', (socket) => {
