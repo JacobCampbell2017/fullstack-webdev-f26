@@ -1,0 +1,7 @@
+extends layout
+block content
+  each country in countries
+    article
+      h2= countryName(country)
+      p Capital(s): #{capitalNames(country)}
+      p Currency: #{currencyNames(country)}
