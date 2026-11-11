@@ -1,0 +1,10 @@
+extends layout
+block content
+  each country in countries
+    article
+      h2= countryName(country)
+      if country.flag && country.flag.url_png
+        img(src=country.flag.url_png alt=country.flag.description || `Flag of ${countryName(country)}` width='160' loading='lazy')
+      else
+        p Flag unavailable
+      p Population: #{country.population.toLocaleString('en-US')}
