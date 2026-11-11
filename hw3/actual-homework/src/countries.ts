@@ -43,9 +43,12 @@ export const currencyNames = (country: Country): string => (country.currencies ?
   .map((currency) => `${currency.name || currency.code || 'Unknown currency'} (${currency.symbol || 'symbol unavailable'})`)
   .join(', ') || 'Unavailable';
 
-export const getCountries = async (): Promise<Country[]> => {
+const fetchCountries = async (): Promise<Country[]> => {
   const apiKey = process.env.RESTCOUNTRIES_API;
-  if (!apiKey) throw new Error('Set RESTCOUNTRIES_API in the repository root .env file');
+  // PR review (keitabacon): braces on if statements (Airbnb blocks-braces).
+  if (!apiKey) {
+    throw new Error('Set RESTCOUNTRIES_API in the repository root .env file');
+  }
 
   const countries: Country[] = [];
   let more = true;
@@ -54,11 +57,17 @@ export const getCountries = async (): Promise<Country[]> => {
     url.searchParams.set('limit', '100');
     url.searchParams.set('offset', String(countries.length));
     url.searchParams.set('response_fields', 'names.common,capitals,currencies,population,flag,region');
+    // PR review (keitabacon): await in loop is intentional, see reason below.
+    // Pages must be fetched in order
     const response = await fetch(url, {
       headers: { Authorization: `Bearer ${apiKey}` },
       signal: AbortSignal.timeout(15000),
     });
-    if (!response.ok) throw new Error(`REST Countries returned ${response.status}`);
+    // PR review (keitabacon): braces on if statements (Airbnb blocks-braces).
+    if (!response.ok) {
+      throw new Error(`REST Countries returned ${response.status}`);
+    }
+    // eslint-disable-next-line no-await-in-loop
     const body = await response.json() as {
       data?: { objects?: Country[]; meta?: { more?: boolean } };
     } | null;
@@ -72,4 +81,15 @@ export const getCountries = async (): Promise<Country[]> => {
     more = body.data.meta.more;
   }
   return countries;
+};
+
+let cachedCountries: Promise<Country[]> | undefined;
+
+// PR review (lanluu-hub): cache the dataset instead of refetching on every route.
+export const getCountries = (): Promise<Country[]> => {
+  cachedCountries ??= fetchCountries().catch((error) => {
+    cachedCountries = undefined;
+    throw error;
+  });
+  return cachedCountries;
 };
